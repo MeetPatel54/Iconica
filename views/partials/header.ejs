@@ -9,7 +9,16 @@
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
-<body class="font-['helvetica_now_display']">
-    <nav class="w-full fixed top-0 left-0 px-5 py-3">
+<body class="font-['helvetica_now_display']" style="font-family: Helvetica, Arial, sans-serif;">
+    <nav class="w-full justify-between flex px-5 py-3">
         <h3 class="text-xl">Iconica</h3>
+        <% var loggedin = typeof loggedin !== "undefined" ? loggedin : true %>
+        <% if(loggedin) { %>
+        <div class="flex gap-5">
+            <a href="/shop">Shop</a>
+            <a href="/cart">Cart</a>
+            <a href="/account">My Account</a>
+            <a href="/users/logout" class="text-red-600">Logout</a>
+        </div>
+        <% } %>
     </nav>

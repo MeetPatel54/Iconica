@@ -1,13 +1,22 @@
+
 <%- include('./partials/header') %>
 
     <% if(error.length>0){ %>
-        <div class="absolute top-5 left-1/2 -translate-x-1/2 -translate-y-1/2 p-3 rounded-md bg-red-500">
+        <div class="absolute top-5 left-1/2 -translate-x-1/2 -translate-y-1/2 p-3 rounded-md bg-red-500" style="font-family: Helvetica, Arial, sans-serif;">
             <span class="inline-block mt-1 mb-1 text-white">
                 <%= error %>
             </span>
         </div>
         <% } %>
-            <div class="w-full h-screen flex px-20">
+
+        <% if(success.length>0){ %>
+            <div class="absolute top-5 left-1/2 -translate-x-1/2 -translate-y-1/2 p-3 rounded-md bg-blue-500" style="font-family: Helvetica, Arial, sans-serif;">
+                <span class="inline-block mt-1 mb-1 text-white">
+                    <%= success %>
+                </span>
+            </div>
+            <% } %>
+            <div class="w-full h-screen flex px-20" style="font-family: Helvetica, Arial, sans-serif;">
                 <div class="w-1/2 flex items-center justify-center h-screen">
                     <div class="w-full px-32">
                         <h3 class="text-4xl">welcome to <span class="text-blue-400 font-semibold">Iconica</span></h3>
