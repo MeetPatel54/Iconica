@@ -13,7 +13,8 @@ router.get('/', (req,res) => {
 router.get('/shop', isLoggedIn, async (req,res) => {
     let products = await productModel.find();
     let success = req.flash('success');
-    res.render('shop', {products, success});
+    let error = req.flash('error');
+    res.render('shop', {products, success, error});
 });
 
 router.get('/cart', isLoggedIn, async (req,res) => {

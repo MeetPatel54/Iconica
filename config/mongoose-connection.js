@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const config = require('config');
 const dbgr = require('debug')("development:mongoose");
 mongoose
-.connect(`${config.get("MONGODB_URI")}/iconica`)
+.connect(process.env.MONGODB_URI)
 .then(function(){
     dbgr("Connected");
 })

@@ -1,6 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const ownerModel = require('../models/owner-model');
+const bcrypt = require('bcrypt');
+const isOwner = require('../middlewares/isOwner');
 
 if(process.env.NODE_ENV === 'development'){
     router.post('/create', async (req,res)=>{
@@ -11,17 +13,21 @@ if(process.env.NODE_ENV === 'development'){
             .send("You dont have permission to create new owner")
         }
         let {fullname, email, password} = req.body;
-
-        let createdOwner = await ownerModel.create({
-            fullname,
-            email,
-            password
-        });
-
-        res.status(201).send(createdOwner);
+        bcrypt.genSalt(10, function(err,salt){
+            bcrypt.hash(password, salt, async function(err, hash){
+                if(err) throw err;
+                password = hash;
+                let createdOwner = await ownerModel.create({
+                    fullname,
+                    email,
+                    password
+                });
+                res.status(201).send(createdOwner);
+            });
+        } )
     });
 }
-router.get('/admin', (req,res)=>{
+router.get('/admin',isOwner, (req,res)=>{
     let success = req.flash("success");
     res.render("createproducts", {success});
 });
