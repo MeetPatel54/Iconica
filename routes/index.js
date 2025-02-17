@@ -1,79 +1,150 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const isLoggedIn = require('../middlewares/isLoggedIn');
-const productModel = require('../models/product-model');
-const userModel = require('../models/user-model');
+const isLoggedIn = require("../middlewares/isLoggedIn");
+const productModel = require("../models/product-model");
+const userModel = require("../models/user-model");
+const e = require("connect-flash");
 
-router.get('/', (req,res) => {
-    let error = req.flash('error');
-    let success = req.flash('success');
-    res.render('index', {error, success, loggedin: false});
+router.get("/", (req, res) => {
+  let error = req.flash("error");
+  let success = req.flash("success");
+  res.render("index", { error, success, loggedin: false });
 });
 
-router.get('/shop', isLoggedIn, async (req,res) => {
-    let products = await productModel.find();
-    let success = req.flash('success');
-    let error = req.flash('error');
-    res.render('shop', {products, success, error});
+router.get("/shop", isLoggedIn, async (req, res) => {
+  let products = await productModel.find();
+  let success = req.flash("success");
+  let error = req.flash("error");
+  res.render("shop", { products, success, error });
 });
 
-router.get('/cart', isLoggedIn, async (req,res) => {
-    let user = await userModel.findOne({email: req.user.email})
-    .populate("cart");
-    let tex = 20;
-    if (!user || !user.cart.length) {
-        return res.render('cart', { user, bill: 0 });
+router.get("/cart", isLoggedIn, async (req, res) => {
+  // Get flash message for success
+  let success = req.flash("success");
+
+  // Initialize cart in session if not already initialized
+  if (!req.session.cart) {
+    req.session.cart = [];
+  }
+
+  // Retrieve user data from session
+  let user = await userModel
+    .findOne({ email: req.user.email })
+    .populate("cart"); // You can access user from session if logged in
+
+  if (req.session.cart.length === 0) {
+    return res.render("cart", { user, bill: 0, success, session: req.session });
+  }
+
+  // Calculate the total MRP, total discount, and total bill based on session cart
+  let totalMRP = req.session.cart.reduce(
+    (sum, item) => sum + Number(item.price) * item.quantity,
+    0
+  );
+  let totalDiscount = req.session.cart.reduce(
+    (sum, item) => sum + Number(item.discount) * item.quantity,
+    0
+  );
+
+  // Add a platform fee (flat rate)
+  let platformFee = 20; // Fixed fee
+  let bill = totalMRP - totalDiscount + platformFee;
+  console.log(bill);
+  // Render the cart page with the data
+  res.render("cart", { user, bill, success, session: req.session });
+});
+
+router.get("/addtocart/:productid", isLoggedIn, async (req, res) => {
+  // Retrieve the product ID from the URL parameters
+  let productId = req.params.productid;
+
+  // Initialize the session cart if it doesn't exist
+  if (!req.session.cart) {
+    req.session.cart = [];
+  }
+
+  // Check if the item already exists in the session cart
+  let existingItem = req.session.cart.find((item) => item._id === productId);
+
+  if (existingItem) {
+    existingItem.quantity += 1;
+    req.flash("success", "Item already in cart");
+    return res.redirect("/shop");
+  } else {
+    try {
+      // Fetch the product details from the database
+      let product = await productModel.findById(productId);
+
+      // If the product is not found, return with an error
+      if (!product) {
+        req.flash("error", "Product not found");
+        return res.redirect("/shop");
+      }
+      const base64Image = product.image.toString("base64");
+      // Add the product with its price to the session cart
+      req.session.cart.push({
+        _id: product._id,
+        name: product.name,
+        price: product.price,
+        quantity: 1, // Default quantity is 1
+        discount: product.discount || 0, // Assuming discount is stored in the product model
+        category: product.category,
+        image: base64Image, // Assuming image is stored in the product model
+      });
+
+      req.flash("success", "Added to cart");
+      return res.redirect("/shop");
+    } catch (err) {
+      console.error(err);
+      req.flash("error", "Error adding product to cart");
+      return res.redirect("/shop");
     }
-
-    let totalMRP = user.cart.reduce((sum, item) => sum + Number(item.price), 0);
-    let totalDiscount = user.cart.reduce((sum, item) => sum + Number(item.discount), 0);
-
-    let platformFee = 20; // Only added once, not per item
-    let bill = totalMRP - totalDiscount + platformFee;
-
-    res.render('cart', { user, bill });
+  }
 });
 
-router.post('/update-cart', isLoggedIn, async (req, res) => {
-    const { id, action } = req.body;
-    let user = await userModel.findOne({ email: req.user.email }).populate("cart");
+// Update Cart Route
+router.post("/updatecart", isLoggedIn, async (req, res) => {
+  let updatedCart = req.body.cart; // Array of { itemId, quantity }
+  // Debugging line
 
-    let item = user.cart.find(item => item._id.toString() === id);
-    if (!item) return res.json({ success: false });
+  // Update session cart based on the new quantities
+  updatedCart.forEach((item) => {
+    // Check if quantity is 0 and remove item from cart if it is
+    if (item.quantity === "0") {
+      req.session.cart = req.session.cart.filter(
+        (cartItem) => cartItem._id !== item.itemId
+      );
+    } else {
+      // Find item in the session cart and update its quantity
+      let cartItem = req.session.cart.find(
+        (cartItem) => cartItem._id === item.itemId
+      );
+      if (cartItem) {
+        cartItem.quantity = item.quantity; // Update quantity
+      }
+    }
+  });
 
-    // Update Quantity
-    if (action === "increase") item.quantity += 1;
-    else if (action === "decrease" && item.quantity > 1) item.quantity -= 1;
+  // Recalculate the total bill with updated cart
+  let totalMRP = req.session.cart.reduce(
+    (sum, item) => sum + Number(item.price) * item.quantity,
+    0
+  );
+  let totalDiscount = req.session.cart.reduce(
+    (sum, item) => sum + Number(item.discount) * item.quantity,
+    0
+  );
+  let platformFee = 20; // Only added once, not per item
+  let bill = totalMRP - totalDiscount + platformFee;
 
-    await user.save(); // Save updated cart
+  // Save the updated cart in session
+  req.session.cart = req.session.cart;
 
-    // Recalculate Price
-    let totalMRP = user.cart.reduce((sum, item) => sum + Number(item.price) * item.quantity, 0);
-    let totalDiscount = user.cart.reduce((sum, item) => sum + Number(item.discount) * item.quantity, 0);
-    let bill = totalMRP - totalDiscount + 20; // ₹20 platform fee added once
-
-    res.json({
-        success: true,
-        quantity: item.quantity,
-        price: item.price * item.quantity,
-        totalMRP,
-        totalDiscount,
-        bill
-    });
+  res.json({ success: true, cart: req.session.cart, bill });
+  // Send back the updated cart and bill
 });
 
-
-router.get('/addtocart/:productid', isLoggedIn, async (req,res) => {
-    let user = await userModel.findOne({email : req.user.email});
-    user.cart.push(req.params.productid);
-    await user.save();
-    req.flash('success', 'Added to cart');
-    res.redirect('/shop');
-});
-
-
-
-router.get('/logout', isLoggedIn, (req,res) => {
-    res.render('/shop');
+router.get("/logout", isLoggedIn, (req, res) => {
+  res.render("/shop");
 });
 module.exports = router;

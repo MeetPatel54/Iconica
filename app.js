@@ -21,7 +21,10 @@ app.use(
     expressSession({
         secret: process.env.EXPRESS_SESSION_SECRET,
         resave: false,
-        saveUninitialized: false
+        saveUninitialized: false,
+        cookie: {
+            maxAge: 48 * 60 * 60 * 1000 // 48 hours in milliseconds
+        }
     })
 );
 app.use(flash());
