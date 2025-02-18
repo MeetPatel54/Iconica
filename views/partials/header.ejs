@@ -10,11 +10,11 @@
 </head>
 
 <body class="font-['helvetica_now_display']" style="font-family: Helvetica, Arial, sans-serif;">
-    <nav class="w-full justify-between flex px-5 py-3">
+    <nav class="w-full flex px-5 py-3 items-center">
         <h3 class="text-xl">Iconica</h3>
         <% var loggedin = typeof loggedin !== "undefined" ? loggedin : true %>
         <% if(loggedin) { %>
-        <div class="flex gap-5">
+        <div class="flex gap-5 ml-auto">
             <a href="/shop">Shop</a>
             <a href="/cart">Cart</a>
             <a href="/account">My Account</a>

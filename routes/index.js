@@ -12,11 +12,41 @@ router.get("/", (req, res) => {
 });
 
 router.get("/shop", isLoggedIn, async (req, res) => {
-  let products = await productModel.find();
-  let success = req.flash("success");
-  let error = req.flash("error");
-  res.render("shop", { products, success, error });
+  try {
+    let { category, sortby } = req.query;
+    let filterQuery = {};
+
+    // Filtering Logic
+    if (category === 'new') {
+        filterQuery = { isNewCollection: true };
+    } else if (category === 'discounted') {
+        filterQuery = { discount: { $gt: 0 } };
+    } // 'all' means no filter (default)
+
+    let sortOptions = {};  // MongoDB sorting object
+    if (sortby === 'popular') {
+        sortOptions = { popularity: -1 }; // Higher popularity first
+    } else if (sortby === 'newest') {
+        sortOptions = { createdAt: -1 }; // Newest first
+    } else if (sortby === 'price-low-high') {
+        sortOptions = { price: 1 }; // Price: Low to High
+    } else if (sortby === 'price-high-low') {
+        sortOptions = { price: -1 }; // Price: High to Low
+    }
+
+    // Fetch products with filtering + sorting applied in MongoDB query
+    let products = await productModel.find(filterQuery).sort(sortOptions);
+
+    let success = req.flash("success");
+    let error = req.flash("error");
+
+    res.render("shop", { success, error, sortby, category, products });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Server Error');
+  }
 });
+
 
 router.get("/cart", isLoggedIn, async (req, res) => {
   // Get flash message for success

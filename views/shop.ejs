@@ -8,6 +8,11 @@
     <link href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css" rel="stylesheet">
 </head>
 <body class="bg-gray-100">
+    <div class="hidden lg:block lg:w-full">
+        <%- include('./partials/header') %>
+    </div>
+    
+       
     <!-- Success & Error Messages -->
     <% if(success.length > 0) { %>
         <div id="successMessage" class="fixed top-5 left-1/2 transform -translate-x-1/2 p-4 rounded-md bg-green-500 text-white text-center shadow-lg z-50">
@@ -19,7 +24,7 @@
             <%= error %>
         </div>
     <% } %>
-    <%- include('./partials/header') %>
+   
     <!-- Mobile Sidebars -->
     <div class="lg:hidden fixed inset-y-0 left-0 z-40 w-64 bg-white shadow-lg transform -translate-x-full transition-transform duration-300 ease-in-out" id="leftSidebar">
         <div class="p-6">
@@ -28,24 +33,41 @@
             </button>
             <h3 class="font-semibold text-lg mb-4">Sort & Filter</h3>
             <!-- Sort By -->
-            <div class="mb-6">
-                <h4 class="font-medium mb-2">Sort by</h4>
-                <select class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" name="sortby">
-                    <option value="popular">Popular</option>
-                    <option value="newest">Newest</option>
-                    <option value="price-low-high">Price: Low to High</option>
-                    <option value="price-high-low">Price: High to Low</option>
-                </select>
-            </div>
+<div class="mb-6">
+    <h4 class="font-medium mb-2">Sort by</h4>
+    <form id="sortForm" action="/shop" method="GET">
+        <!-- Preserve other query params -->
+        <input type="hidden" name="category" value="<%= category || '' %>">
+
+        <select class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            name="sortby" onchange="document.getElementById('sortForm').submit()">
+            <option value="popular" <%= sortby === 'popular' ? 'selected' : '' %>>Popular</option>
+            <option value="newest" <%= sortby === 'newest' ? 'selected' : '' %>>Newest</option>
+            <option value="price-low-high" <%= sortby === 'price-low-high' ? 'selected' : '' %>>Price: Low to High</option>
+            <option value="price-high-low" <%= sortby === 'price-high-low' ? 'selected' : '' %>>Price: High to Low</option>
+        </select>
+    </form>
+</div>
+
             <!-- Categories -->
-            <div class="mb-6">
-                <h4 class="font-medium mb-2">Categories</h4>
-                <ul class="space-y-2">
-                    <li><a class="text-gray-600 hover:text-blue-500 transition-colors" href="">New Collection</a></li>
-                    <li><a class="text-gray-600 hover:text-blue-500 transition-colors" href="">All Products</a></li>
-                    <li><a class="text-gray-600 hover:text-blue-500 transition-colors" href="">Discounted Products</a></li>
-                </ul>
-            </div>
+<div class="mb-6">
+    <h4 class="font-medium mb-2">Categories</h4>
+    <ul class="space-y-2">
+        <li>
+            <a class="text-gray-600 hover:text-blue-500 transition-colors <%= category === 'new' ? 'font-bold text-blue-500' : '' %>"
+                href="/shop?category=new">New Collection</a>
+        </li>
+        <li>
+            <a class="text-gray-600 hover:text-blue-500 transition-colors <%= category === 'all' ? 'font-bold text-blue-500' : '' %>"
+                href="/shop?category=all">All Products</a>
+        </li>
+        <li>
+            <a class="text-gray-600 hover:text-blue-500 transition-colors <%= category === 'discounted' ? 'font-bold text-blue-500' : '' %>"
+                href="/shop?category=discounted">Discounted Products</a>
+        </li>
+    </ul>
+</div>
+
             <!-- Filters -->
             <div>
                 <h4 class="font-medium mb-2">Filter by</h4>
@@ -65,7 +87,7 @@
             <%- include('./partials/headerRes') %>
         </div>
     </div>
-
+    
     <!-- Main Content -->
     <div class="container mx-auto px-4 py-8">
         <div class="flex justify-between items-center mb-6 lg:hidden">
@@ -81,32 +103,45 @@
         <div class="hidden lg:block mb-8">
             <h1 class="text-3xl font-bold text-center">Our Collection</h1>
         </div>
-        
+       
         <div class="flex flex-col lg:flex-row gap-8">
             <!-- Desktop Sidebar -->
-            <div class="hidden lg:block lg:w-1/4">
+                 <div class="hidden lg:block lg:w-1/4">
                 <div class="bg-white rounded-lg shadow-md p-6">
-                    <!-- Sort By -->
-                    <div class="mb-6">
-                        <h3 class="font-semibold text-lg mb-3">Sort by</h3>
-                        <select class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" name="sortby">
-                            <option value="popular">Popular</option>
-                            <option value="newest">Newest</option>
-                            <option value="price-low-high">Price: Low to High</option>
-                            <option value="price-high-low">Price: High to Low</option>
-                        </select>
-                    </div>
+                   <!-- Sort By -->
+                <div class="mb-6">
+             <h4 class="font-medium mb-2">Sort by</h4>
+             <form id="sortFormDesktop" action="/shop" method="GET">
+            <!-- Preserve other query params -->
+            <input type="hidden" name="category" value="<%= category || '' %>" />
 
+            <select class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            name="sortby" onchange="document.getElementById('sortFormDesktop').submit()">
+            <option value="popular" <%= sortby === 'popular' ? 'selected' : '' %>>Popular</option>
+            <option value="newest" <%= sortby === 'newest' ? 'selected' : '' %>>Newest</option>
+            <option value="price-low-high" <%= sortby === 'price-low-high' ? 'selected' : '' %>>Price: Low to High</option>
+            <option value="price-high-low" <%= sortby === 'price-high-low' ? 'selected' : '' %>>Price: High to Low</option>
+        </select>
+    </form>
+                   </div>
                     <!-- Categories -->
                     <div class="mb-6">
-                        <h3 class="font-semibold text-lg mb-3">Categories</h3>
-                        <ul class="space-y-2">
-                            <li><a class="text-gray-600 hover:text-blue-500 transition-colors" href="">New Collection</a></li>
-                            <li><a class="text-gray-600 hover:text-blue-500 transition-colors" href="">All Products</a></li>
-                            <li><a class="text-gray-600 hover:text-blue-500 transition-colors" href="">Discounted Products</a></li>
-                        </ul>
+    <h4 class="font-medium mb-2">Categories</h4>
+    <ul class="space-y-2">
+        <li>
+            <a class="text-gray-600 hover:text-blue-500 transition-colors <%= category === 'new' ? 'font-bold text-blue-500' : '' %>"
+                href="/shop?category=new">New Collection</a>
+        </li>
+        <li>
+            <a class="text-gray-600 hover:text-blue-500 transition-colors <%= category === 'all' ? 'font-bold text-blue-500' : '' %>"
+                href="/shop?category=all">All Products</a>
+        </li>
+        <li>
+            <a class="text-gray-600 hover:text-blue-500 transition-colors <%= category === 'discounted' ? 'font-bold text-blue-500' : '' %>"
+                href="/shop?category=discounted">Discounted Products</a>
+        </li>
+    </ul>
                     </div>
-
                     <!-- Filters -->
                     <div>
                         <h3 class="font-semibold text-lg mb-3">Filter by</h3>
@@ -128,16 +163,16 @@
                                     <%= product.discount %>% OFF
                                 </div>
                             <% } %>
-                            <div class="h-40 sm:h-48 flex items-center justify-center" style="background-color: <%= product.bgcolor %>">
+                            <div class="h-40 sm:h-48 flex items-center justify-center" style="background-color:<%= product.bgcolor %>">
                                 <img class="h-32 sm:h-40 object-contain" src="data:image/jpeg;base64,<%= product.image.toString('base64') %>" alt="<%= product.name %>">
                             </div>
-                            <div class="p-3 sm:p-4" style="background-color: <%= product.panelcolor %>; color: <%= product.textcolor %>">
+                            <div class="p-3 sm:p-4" style="background-color: <%= product.panelcolor %>; color:<%= product.textcolor %>">
                                 <h3 class="text-sm sm:text-base font-semibold mb-1 truncate"><%= product.name %></h3>
                                 <div class="flex justify-between items-center mb-2">
                                     <span class="text-lg font-bold">₹<%= product.price %></span>
                                     <a href="/addtocart/<%= product._id %>" class="bg-blue-500 text-white px-2 py-1 rounded-full text-xs hover:bg-blue-600 transition-colors">
                                         Add to Cart
-                                    </a>
+                                    </a>                
                                 </div>
                                 <a href="/product/<%= product._id %>" class="block text-center hover:underline text-sm color: <%= product.textcolor %>;">View Details</a>
                             </div>
@@ -151,6 +186,9 @@
     <%- include('./partials/footer') %>
 
     <script>
+
+
+
         // Auto-hide success and error messages after 5 seconds
         setTimeout(() => {
             const successMessage = document.getElementById('successMessage');
