@@ -8,17 +8,17 @@
     <link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet" />
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-
 <body class="font-['helvetica_now_display']" style="font-family: Helvetica, Arial, sans-serif;">
-    <nav class="w-full flex px-5 py-3 items-center">
+    <nav class="w-full flex px-5 py-3 items-center sticky top-0 bg-white/30 backdrop-blur-md z-50">
         <h3 class="text-xl">Iconica</h3>
         <% var loggedin = typeof loggedin !== "undefined" ? loggedin : true %>
         <% if(loggedin) { %>
         <div class="flex gap-5 ml-auto">
             <a href="/shop">Shop</a>
             <a href="/cart">Cart</a>
-            <a href="/account">My Account</a>
+            <a href="/profile">My Account</a>
             <a href="/users/logout" class="text-red-600">Logout</a>
         </div>
         <% } %>
     </nav>
+</body>

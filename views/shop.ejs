@@ -8,9 +8,10 @@
     <link href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css" rel="stylesheet">
 </head>
 <body class="bg-gray-100">
-    <div class="hidden lg:block lg:w-full">
+    <div class="hidden lg:block lg:w-full sticky top-0 z-50">
         <%- include('./partials/header') %>
     </div>
+    
     
        
     <!-- Success & Error Messages -->
@@ -170,9 +171,14 @@
                                 <h3 class="text-sm sm:text-base font-semibold mb-1 truncate"><%= product.name %></h3>
                                 <div class="flex justify-between items-center mb-2">
                                     <span class="text-lg font-bold">₹<%= product.price %></span>
-                                    <a href="/addtocart/<%= product._id %>" class="bg-blue-500 text-white px-2 py-1 rounded-full text-xs hover:bg-blue-600 transition-colors">
-                                        Add to Cart
-                                    </a>                
+                                    <a href="/addtocart/<%= product._id %>" 
+                                        class="bg-[<%= product.bgcolor %>] text-[<%= product.panelcolor %>] p-2 rounded-full hover:bg-pearl-600 transition-colors flex items-center justify-center w-10 h-10">
+                                         <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+                                             <path d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-1 5h13m-4 0a1 1 0 1 1-2 0m4 0a1 1 0 1 1-2 0" 
+                                             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                         </svg>
+                                     </a>
+                                     
                                 </div>
                                 <a href="/product/<%= product._id %>" class="block text-center hover:underline text-sm color: <%= product.textcolor %>;">View Details</a>
                             </div>

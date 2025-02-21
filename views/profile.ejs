@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Account Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        // JavaScript to handle section content visibility and active states
+        function showContent(contentId, sectionName) {
+            // Hide all content sections
+            const allSections = document.querySelectorAll('.content-section');
+            allSections.forEach(section => section.classList.add('hidden'));
+
+            // Remove active class from all sections
+            const allSidebarItems = document.querySelectorAll('.sidebar-item');
+            allSidebarItems.forEach(item => item.classList.remove('bg-gray-200', 'text-gray-900', 'border-gray-300', 'rotate-90'));
+
+            // Add active class to the clicked section
+            const selectedSection = document.getElementById(contentId);
+            const selectedSidebarItem = document.querySelector(`[data-section="${contentId}"]`);
+            if (selectedSection) {
+                selectedSection.classList.remove('hidden');
+            }
+            if (selectedSidebarItem) {
+                selectedSidebarItem.classList.add('bg-gray-200', 'text-gray-900', 'border-gray-300');
+            }
+
+            // Update main content heading
+            const mainHeading = document.getElementById('main-content-heading');
+            if (mainHeading) {
+                mainHeading.textContent = sectionName;
+            }
+
+            // Rotate arrow icon for active section
+            const arrowIcon = selectedSidebarItem.querySelector('.arrow-icon');
+            if (arrowIcon) {
+                arrowIcon.classList.toggle('rotate-90');
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-50">
+    <div class="hidden lg:block lg:w-full top-2 z-50 mb-30">
+        <%- include('./partials/header') %>
+    </div>
+    <!-- Header -->
+    <header class="p-4 border-b">
+        <div class="container mx-auto flex flex-col sm:flex-row justify-between items-center gap-4">
+            <div class="flex items-center gap-4">
+                <div class="w-12 h-12 bg-gray-200 rounded-full object-cover">
+                    <img src="https://api.dicebear.com/8.x/initials/svg?seed=PatelMeet" alt="Avatar" class="rounded-full">
+                </div>
+                <div class="text-sm text-gray-600">
+                    <div>pmeet9776@gmail.com</div>
+                    <div>8128265643</div>
+                </div>
+            </div>
+            <div class="flex gap-4">
+                <button class="px-6 py-2 border border-gray-300 hover:border-gray-400">EDIT PROFILE</button>
+            </div>
+        </div>
+    </header>
+
+    <div class="container mx-auto p-4">
+        <div class="flex flex-col lg:flex-row gap-8">
+            <!-- Sidebar Navigation -->
+            <aside class="w-full lg:w-1/4">
+                <!-- Order Alerts Section -->
+                <div class="mb-8">
+                    <h2 class="font-medium mb-4 cursor-pointer" onclick="showContent('order-alerts', 'Order Alerts')">Order Alerts</h2>
+                    <div class="bg-gray-900 text-white p-4 rounded flex items-center justify-between cursor-pointer sidebar-item" data-section="order-alerts" onclick="showContent('order-alerts', 'Order Alerts')">
+                        <div class="flex items-center gap-3">
+                            <span class="text-xl">🔒</span>
+                            <div>
+                                <div class="font-medium">My Orders</div>
+                                <div class="text-sm text-gray-300">Check your order status</div>
+                            </div>
+                        </div>
+                        <span class="text-xl arrow-icon">›</span>
+                    </div>
+                </div>
+
+                <!-- Saved Payment Methods -->
+                <div class="space-y-4 mb-8">
+                    <div class="flex items-center gap-3 p-3 hover:bg-gray-100 rounded cursor-pointer sidebar-item" data-section="saved-cards" onclick="showContent('saved-cards', 'Saved Cards')">
+                        <span class="text-xl">💳</span>
+                        <div>
+                            <div class="font-medium">Saved Cards</div>
+                            <div class="text-sm text-gray-500">Add credit or debit card for faster checkout</div>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-3 p-3 hover:bg-gray-100 rounded cursor-pointer sidebar-item" data-section="saved-upi" onclick="showContent('saved-upi', 'Saved UPI IDs')">
+                        <span class="text-xl">📱</span>
+                        <div>
+                            <div class="font-medium">Saved UPI IDs</div>
+                            <div class="text-sm text-gray-500">Add UPI IDs for faster checkout</div>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-3 p-3 hover:bg-gray-100 rounded cursor-pointer sidebar-item" data-section="saved-address" onclick="showContent('saved-address', 'Saved Address')">
+                        <span class="text-xl">📍</span>
+                        <div>
+                            <div class="font-medium">Saved Address</div>
+                            <div class="text-sm text-gray-500">Add a delivery address for faster checkout</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Help Section -->
+                <div>
+                    <h2 class="font-medium mb-4 cursor-pointer" onclick="showContent('help-services', 'Help & Services')">Help & Services</h2>
+                    <div class="space-y-4">
+                        <div class="flex items-center gap-3 p-3 hover:bg-gray-100 rounded cursor-pointer sidebar-item" data-section="help-center" onclick="showContent('help-center', 'Help Center')">
+                            <span class="text-xl">❓</span>
+                            <div>
+                                <div class="font-medium">Help Center</div>
+                                <div class="text-sm text-gray-500">Find help here</div>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-3 p-3 hover:bg-gray-100 rounded cursor-pointer sidebar-item" data-section="terms-conditions" onclick="showContent('terms-conditions', 'Terms & Conditions')">
+                            <span class="text-xl">📄</span>
+                            <div>
+                                <div class="font-medium">Terms & Conditions</div>
+                                <div class="text-sm text-gray-500">Terms and Conditions</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Main Content -->
+            <main class="flex-1">
+                <div class="flex justify-between items-center mb-6">
+                    <h1 id="main-content-heading" class="text-xl font-medium">Order History</h1>
+                    <span class="text-sm text-gray-500">Past 6 months</span>
+                </div>
+                <div id="order-alerts" class="content-section bg-white p-8 rounded border text-center text-gray-500 hidden">
+                    No Orders placed
+                </div>
+                <div id="saved-cards" class="content-section bg-white p-8 rounded border text-center text-gray-500 hidden">
+                    No saved cards available.
+                </div>
+                <div id="saved-upi" class="content-section bg-white p-8 rounded border text-center text-gray-500 hidden">
+                    No saved UPI IDs available.
+                </div>
+                <div id="saved-address" class="content-section bg-white p-8 rounded border text-center text-gray-500 hidden">
+                    No saved address available.
+                </div>
+                <div id="help-center" class="content-section bg-white p-8 rounded border text-center text-gray-500 hidden">
+                    Visit the help center for assistance.
+                </div>
+                <div id="terms-conditions" class="content-section bg-white p-8 rounded border text-center text-gray-500 hidden">
+                    Terms and conditions for using the platform.
+                </div>
+            </main>
+        </div>
+    </div>
+</body>
+</html>

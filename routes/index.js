@@ -174,6 +174,10 @@ router.post("/updatecart", isLoggedIn, async (req, res) => {
   // Send back the updated cart and bill
 });
 
+router.get('/profile', isLoggedIn, async (req, res) => {
+  res.render('profile');
+});
+
 router.get("/logout", isLoggedIn, (req, res) => {
   res.render("/shop");
 });
