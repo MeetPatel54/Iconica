@@ -1,0 +1,74 @@
+<div id="saved-address" class="content-section bg-white p-8 rounded-lg border shadow-sm hidden">
+    <h2 class="text-xl font-medium mb-4">Saved Addresses</h2>
+
+    <!-- No address message -->
+    <div id="no-address-message" class="text-center text-gray-500">No saved address available.</div>
+
+    <!-- Address Form -->
+    <form id="address-form" class="hidden space-y-4">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+                <label class="block text-sm font-medium text-gray-700">Full Name</label>
+                <input type="text" id="full-name" class="w-full p-2 border rounded-md" placeholder="John Doe" required>
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700">Mobile Number</label>
+                <input type="tel" id="mobile-number" class="w-full p-2 border rounded-md" placeholder="9876543210" required>
+            </div>
+        </div>
+        <div>
+            <label class="block text-sm font-medium text-gray-700">Pincode</label>
+            <input type="text" id="pincode" class="w-full p-2 border rounded-md" placeholder="123456" required>
+        </div>
+        <div>
+            <label class="block text-sm font-medium text-gray-700">Flat, House No., Building Name</label>
+            <input type="text" id="address-line1" class="w-full p-2 border rounded-md" placeholder="Apt 123, Galaxy Towers" required>
+        </div>
+        <div>
+            <label class="block text-sm font-medium text-gray-700">Street, Locality, Area</label>
+            <input type="text" id="address-line2" class="w-full p-2 border rounded-md" placeholder="Main Street, Near Central Park" required>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+                <label class="block text-sm font-medium text-gray-700">City</label>
+                <input type="text" id="city" class="w-full p-2 border rounded-md" placeholder="Mumbai" required>
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700">State</label>
+                <input type="text" id="state" class="w-full p-2 border rounded-md" placeholder="Maharashtra" required>
+            </div>
+        </div>
+        <div>
+            <label class="block text-sm font-medium text-gray-700">Landmark (Optional)</label>
+            <input type="text" id="landmark" class="w-full p-2 border rounded-md" placeholder="Near City Mall">
+        </div>
+        <div>
+            <label class="block text-sm font-medium text-gray-700">Address Type</label>
+            <select id="address-type" class="w-full p-2 border rounded-md">
+                <option value="home">Home</option>
+                <option value="work">Work</option>
+                <option value="other">Other</option>
+            </select>
+        </div>
+        <div>
+            <label class="block text-sm font-medium text-gray-700">Alternate Phone Number (Optional)</label>
+            <input type="tel" id="alternate-number" class="w-full p-2 border rounded-md" placeholder="9876543211">
+        </div>
+        <button type="submit" class="w-full bg-gray-900 text-white py-2 rounded-md hover:bg-gray-700 transition">
+            Save Address
+        </button>
+    </form>
+
+    <!-- Add New Address Button -->
+    <button id="add-address-btn" class="w-full mt-4 bg-gray-800 text-white py-2 rounded-md hover:bg-gray-700 transition">
+        Add New Address
+    </button>
+</div>
+
+<script>
+    document.getElementById('add-address-btn').addEventListener('click', function () {
+        document.getElementById('address-form').classList.remove('hidden');
+        document.getElementById('no-address-message').classList.add('hidden');
+        this.classList.add('hidden'); 
+    });
+</script>

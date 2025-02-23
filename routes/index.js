@@ -3,6 +3,8 @@ const router = express.Router();
 const isLoggedIn = require("../middlewares/isLoggedIn");
 const productModel = require("../models/product-model");
 const userModel = require("../models/user-model");
+const Address = require('../models/address-model');
+
 const e = require("connect-flash");
 
 router.get("/", (req, res) => {
@@ -174,9 +176,33 @@ router.post("/updatecart", isLoggedIn, async (req, res) => {
   // Send back the updated cart and bill
 });
 
-router.get('/profile', isLoggedIn, async (req, res) => {
-  res.render('profile');
+router.get('/profile', isLoggedIn, async (req, res) => {  
+  res.render('profile',{user});
 });
+
+router.post('/api/addresses',isLoggedIn, async (req, res) => {
+  let user = req.user;
+  console.log(user);
+  const userId = req.user._id;
+  console.log(userId);
+  const { fullName, mobile, pincode, state, city, house, area } = req.body;
+
+  if (!userId) return res.status(400).json({ message: "User ID is required" });
+
+  const newAddress = new Address({ userId, fullName, mobile, pincode, state, city, house, area });
+  const savedAddress = await newAddress.save();
+
+  await userModel.findByIdAndUpdate(userId, { $push: { address: savedAddress._id } });
+
+  res.json(savedAddress);
+});
+
+router.get('/api/addresses/:userId', isLoggedIn,async (req, res) => {
+  const { userId } = req.params;
+  const user = await userModel.findById(userId).populate('address');
+  res.json(user ? user.address : []);
+});
+
 
 router.get("/logout", isLoggedIn, (req, res) => {
   res.render("/shop");

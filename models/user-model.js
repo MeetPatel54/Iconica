@@ -18,6 +18,10 @@ const userSchema = mongoose.Schema({
     },
     contact: Number,
     picture: String,
+    address: [{
+        type:mongoose.Schema.Types.ObjectId,
+        ref: "address"
+    }]
 });
 
 module.exports = mongoose.model("user", userSchema);
