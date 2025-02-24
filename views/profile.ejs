@@ -118,13 +118,13 @@
 
                  <!-- Saved Addresses Section -->
     <div id="saved-address" class="content-section bg-white p-6 rounded-lg border shadow-sm">
-        <h2 class="text-xl font-semibold text-gray-700 mb-4">Saved Addresses</h2>
+        <!-- <h2 class="text-xl font-semibold text-gray-700 mb-4">Saved Addresses</h2> -->
         
         <!-- Message when no addresses are saved -->
         <div id="no-address-message" class="text-center text-gray-500">No saved address available.</div>
 
         <!-- Address List -->
-        <div id="address-list" class="space-y-4"></div>
+        <div id="address-list" class="space-y-4" ></div>
 
         <!-- Add New Address Button -->
         <button id="add-address-btn" class="mt-4 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
@@ -134,7 +134,7 @@
         <!-- Address Form (Initially Hidden) -->
         <form id="address-form" class="hidden mt-4 bg-gray-50 p-4 rounded-lg shadow-md">
             <h3 class="text-lg font-semibold mb-2">Add New Address</h3>
-            <input type="text" id="full-name" placeholder="Full Name" class="w-full p-2 border rounded mb-2">
+            <input type="text" id="full-name" placeholder="Full Name" class="w-full p-2 border rounded mb-2" value="<%= user.fullname %>">
             <input type="text" id="mobile" placeholder="Mobile Number" class="w-full p-2 border rounded mb-2">
             <input type="text" id="pincode" placeholder="Pincode" class="w-full p-2 border rounded mb-2">
             <input type="text" id="state" placeholder="State" class="w-full p-2 border rounded mb-2">
@@ -149,19 +149,7 @@
     </div>
 
 
-<!-- Address Form (Hidden Initially) -->
-<div id="address-form" class="content-section bg-white p-6 rounded-lg border shadow-sm hidden">
-    <h2 class="text-lg font-semibold">Add New Address</h2>
-    <input type="text" id="mobile" placeholder="Mobile Number" class="w-full p-2 border rounded mt-2">
-    <input type="text" id="pincode" placeholder="Pincode" class="w-full p-2 border rounded mt-2">
-    <input type="text" id="state" placeholder="State" class="w-full p-2 border rounded mt-2">
-    <input type="text" id="city" placeholder="City" class="w-full p-2 border rounded mt-2">
-    <input type="text" id="house" placeholder="House No, Building, Street" class="w-full p-2 border rounded mt-2">
-    <input type="text" id="area" placeholder="Area, Colony" class="w-full p-2 border rounded mt-2">
-    
-    <button id="save-address-btn" class="mt-4 bg-green-500 text-white px-4 py-2 rounded">Save Address</button>
-    <button id="cancel-address-btn" class="mt-4 bg-gray-500 text-white px-4 py-2 rounded">Cancel</button>
-</div>
+
                 
                 
                 
@@ -179,6 +167,8 @@
 
 <script>
     function showContent(contentId, sectionName) {
+
+
         // Hide all content sections
         const allSections = document.querySelectorAll('.content-section');
         allSections.forEach(section => section.classList.add('hidden'));
@@ -222,11 +212,9 @@
         });
     }
 
-    
-    // Replace with actual logged-in user's ID
-
     // Fetch saved addresses when the page loads
     document.addEventListener("DOMContentLoaded", async () => {
+        showContent('order-alerts', 'Order Alerts');
         await fetchSavedAddresses();
     });
 
@@ -253,6 +241,7 @@
                     <p><strong>${address.fullName}</strong></p>
                     <p>${address.house}, ${address.area}, ${address.city}, ${address.state} - ${address.pincode}</p>
                     <p>Mobile: ${address.mobile}</p>
+                    <button class="delete-btn" onclick="deleteAddress('${address._id}', this)">Delete</button>
                 `;
 
                 addressList.appendChild(addressItem);
@@ -294,6 +283,23 @@
             }
         } catch (error) {
             console.error("Error saving address:", error);
-        }
+        }   
     });
+
+    async function deleteAddress(addressId, buttonElement) {
+    try {
+        const response = await fetch(`/api/delete-address/${addressId}`, {
+            method: "DELETE",
+        });
+
+        if (response.ok) {
+            buttonElement.parentElement.remove(); // Remove the address from UI
+        } else {
+            console.error("Failed to delete address");
+        }
+    } catch (error) {
+        console.error("Error deleting address:", error);
+    }
+}
+
 </script>

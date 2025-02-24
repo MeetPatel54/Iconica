@@ -176,7 +176,8 @@ router.post("/updatecart", isLoggedIn, async (req, res) => {
   // Send back the updated cart and bill
 });
 
-router.get('/profile', isLoggedIn, async (req, res) => {  
+router.get('/profile', isLoggedIn, async (req, res) => {
+  let user = req.user;
   res.render('profile',{user});
 });
 
@@ -201,6 +202,23 @@ router.get('/api/addresses/:userId', isLoggedIn,async (req, res) => {
   const { userId } = req.params;
   const user = await userModel.findById(userId).populate('address');
   res.json(user ? user.address : []);
+});
+
+router.delete("/api/delete-address/:id",isLoggedIn, async (req, res) => {
+  try {
+    const userId = req.user._id;
+      const { id } = req.params;
+      await userModel.findByIdAndUpdate(
+        userId,
+        { $pull: { address: id } }, // Remove address with given ID
+        { new: true }
+    );
+
+      await Address.findByIdAndDelete(id); // Replace with your DB model
+      res.status(200).json({ message: "Address deleted successfully" });
+  } catch (error) {
+      res.status(500).json({ error: "Failed to delete address" });
+  }
 });
 
 
